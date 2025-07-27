@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100">
+    <div id="app" class="container mx-auto px-4 py-12">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8401fcd7-b350-4065-8cd0-0c8ada7e980c.png" alt="Secure authentication system logo with shield icon and bold typography in blue and white colors" class="mx-auto mb-6 rounded-lg shadow-md">
+            <h1 class="text-4xl font-bold text-indigo-800">Secure Authentication</h1>
+            <p class="mt-2 text-lg text-indigo-600">Protect your account with our secure system</p>
+        </header>
+
+        <!-- Auth forms container -->
+        <div id="auth-forms" class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8">
+            <!-- Login Form -->
+            <div id="login-form" class="hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Sign In</h2>
+                <form id="login" class="space-y-4">
+                    <div>
+                        <label for="login-username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <input type="text" id="login-username" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <p id="login-username-error" class="mt-1 text-sm text-red-600 hidden"></p>
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="login-password" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <p id="login-password-error" class="mt-1 text-sm text-red-600 hidden"></p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Sign In
+                        </button>
+                    </div>
+                </form>
+                <p class="mt-4 text-sm text-gray-600">
+                    Don't have an account? 
+                    <button id="show-register" class="text-indigo-600 hover:text-indigo-800 font-medium">Sign up</button>
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="hidden">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Create Account</h2>
+                <form id="register" class="space-y-4">
+                    <div>
+                        <label for="register-username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <input type="text" id="register-username" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <p id="register-username-error" class="mt-1 text-sm text-red-600 hidden"></p>
+                    </div>
+                    <div>
+                        <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="register-password" required minlength="8"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <p id="register-password-error" class="mt-1 text-sm text-red-600 hidden"></p>
+                    </div>
+                    <div>
+                        <label for="register-confirm" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <input type="password" id="register-confirm" required minlength="8"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <p id="register-confirm-error" class="mt-1 text-sm text-red-600 hidden"></p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Register
+                        </button>
+                    </div>
+                </form>
+                <p class="mt-4 text-sm text-gray-600">
+                    Already have an account? 
+                    <button id="show-login" class="text-indigo-600 hover:text-indigo-800 font-medium">Sign in</button>
+                </p>
+            </div>
+        </div>
+
+        <!-- Protected Dashboard (initially hidden) -->
+        <div id="dashboard" class="hidden max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8 mt-8">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Welcome, <span id="welcome-username" class="text-indigo-600">User</span></h2>
+                    <p class="text-indigo-500" id="welcome-role">Role: User</p>
+                </div>
+                <button id="logout-btn" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Logout
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- User Profile -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Your Profile</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Username</p>
+                            <p id="profile-username" class="font-medium">-</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Account Created</p>
+                            <p id="profile-created" class="font-medium">-</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Last Login</p>
+                            <p id="profile-last-login" class="font-medium">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Protected Content -->
+                <div class="bg-indigo-50 p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-medium text-indigo-900 mb-4">Protected Content</h3>
+                    <p class="mb-4">This content is only accessible to authenticated users.</p>
+                    <p id="admin-content" class="text-sm p-4 bg-indigo-100 rounded hidden">This content is only visible to ADMIN users.</p>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="md:col-span-2 bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-indigo-500 pl-4 py-2">
+                            <p class="text-sm text-gray-600">You successfully logged in.</p>
+                            <p class="text-xs text-gray-400">Just now</p>
+                        </div>
+                        <div class="border-l-1 border-gray-200 pl-4 py-2">
+                            <p class="text-sm text-gray-600">Account created successfully.</p>
+                            <p class="text-xs text-gray-400">Just now</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const loginFormEl = document.getElementById('login-form');
+            const registerFormEl = document.getElementById('register-form');
+            const dashboardEl = document.getElementById('dashboard');
+            const showRegisterBtn = document.getElementById('show-register');
+            const showLoginBtn = document.getElementById('show-login');
+            const logoutBtn = document.getElementById('logout-btn');
+            const loginForm = document.getElementById('login');
+            const registerForm = document.getElementById('register');
+
+            // Initialize - show login form by default
+            loginFormEl.classList.remove('hidden');
+
+            // Event listeners
+            showRegisterBtn.addEventListener('click', () => {
+                loginFormEl.classList.add('hidden');
+                registerFormEl.classList.remove('hidden');
+            });
+
+            showLoginBtn.addEventListener('click', () => {
+                registerFormEl.classList.add('hidden');
+                loginFormEl.classList.remove('hidden');
+            });
+
+            logoutBtn?.addEventListener('click', () => {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('currentUser');
+                showAuthForms();
+            });
+
+            // Form submissions
+            loginForm.addEventListener('submit', handleLogin);
+            registerForm.addEventListener('submit', handleRegister);
+
+            // Check for existing auth on page load
+            checkAuthStatus();
+
+            function checkAuthStatus() {
+                const authToken = localStorage.getItem('auth_token');
+                if (authToken) {
+                    showDashboard(authToken);
+                }
+            }
+
+            function showAuthForms() {
+                dashboardEl.classList.add('hidden');
+                document.getElementById('auth-forms').classList.remove('hidden');
+                loginFormEl.classList.remove('hidden');
+                registerFormEl.classList.add('hidden');
+            }
+
+            function showDashboard(token) {
+                document.getElementById('auth-forms').classList.add('hidden');
+                dashboardEl.classList.remove('hidden');
+                
+                // Get user data
+                const user = JSON.parse(localStorage.getItem('currentUser'));
+                if (user) {
+                    document.getElementById('welcome-username').textContent = user.username;
+                    document.getElementById('profile-username').textContent = user.username;
+                    document.getElementById('profile-created').textContent = new Date(user.createdAt).toLocaleString();
+                    document.getElementById('profile-last-login').textContent = new Date().toLocaleString();
+                    
+                    // Set role
+                    const roleText = user.role === 'ADMIN' ? 'ADMIN (Premium)' : 'USER (Standard)';
+                    document.getElementById('welcome-role').textContent = `Role: ${roleText}`;
+                    
+                    // Show admin content if applicable
+                    if (user.role === 'ADMIN') {
+                        document.getElementById('admin-content').classList.remove('hidden');
+                    }
+                }
+            }
+
+            async function handleLogin(e) {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value;
+                
+                // Reset errors
+                document.getElementById('login-username-error').classList.add('hidden');
+                document.getElementById('login-password-error').classList.add('hidden');
+                
+                // Simple validation
+                if (!username) {
+                    document.getElementById('login-username-error').textContent = 'Username is required';
+                    document.getElementById('login-username-error').classList.remove('hidden');
+                    return;
+                }
+                
+                if (!password) {
+                    document.getElementById('login-password-error').textContent = 'Password is required';
+                    document.getElementById('login-password-error').classList.remove('hidden');
+                    return;
+                }
+                
+                // Simulate authentication (in a real app, this would be an API call)
+                const user = authenticateUser(username, password);
+                
+                if (user) {
+                    // Create auth token (simulated)
+                    const authToken = generateToken();
+                    localStorage.setItem('auth_token', authToken);
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    
+                    // Update last login
+                    user.lastLogin = new Date().toISOString();
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    
+                    showDashboard(authToken);
+                } else {
+                    document.getElementById('login-password-error').textContent = 'Invalid username or password';
+                    document.getElementById('login-password-error').classList.remove('hidden');
+                }
+            }
+
+            async function handleRegister(e) {
+                e.preventDefault();
+                const username = document.getElementById('register-username').value.trim();
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm').value;
+                
+                // Reset errors
+                document.getElementById('register-username-error').classList.add('hidden');
+                document.getElementById('register-password-error').classList.add('hidden');
+                document.getElementById('register-confirm-error').classList.add('hidden');
+                
+                // Validation
+                if (!username) {
+                    document.getElementById('register-username-error').textContent = 'Username is required';
+                    document.getElementById('register-username-error').classList.remove('hidden');
+                    return;
+                }
+                
+                if (password.length < 8) {
+                    document.getElementById('register-password-error').textContent = 'Password must be at least 8 characters';
+                    document.getElementById('register-password-error').classList.remove('hidden');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    document.getElementById('register-confirm-error').textContent = 'Passwords do not match';
+                    document.getElementById('register-confirm-error').classList.remove('hidden');
+                    return;
+                }
+                
+                // Check if username exists (in a real app, this would be an API call)
+                if (userExists(username)) {
+                    document.getElementById('register-username-error').textContent = 'Username already exists';
+                    document.getElementById('register-username-error').classList.remove('hidden');
+                    return;
+                }
+                
+                // Create new user (simulating server-side registration)
+                const user = createUser(username, password);
+                
+                // Create auth token (simulated)
+                const authToken = generateToken();
+                localStorage.setItem('auth_token', authToken);
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                showDashboard(authToken);
+            }
+
+            // Helper functions (simulating backend operations)
+            function userExists(username) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                return users.some(user => user.username === username);
+            }
+
+            function createUser(username, password) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const newUser = {
+                    id: Date.now().toString(),
+                    username,
+                    // In a real app, we would hash the password
+                    password: window.btoa(password), // Simple encoding - NOT secure!
+                    role: users.length === 0 ? 'ADMIN' : 'USER', // First user is admin
+                    createdAt: new Date().toISOString(),
+                    lastLogin: new Date().toISOString()
+                };
+                
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                return newUser;
+            }
+
+            function authenticateUser(username, password) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                // Simple authentication - NOT secure in production!
+                const user = users.find(user => 
+                    user.username === username && 
+                    window.btoa(password) === user.password
+                );
+                
+                return user;
+            }
+
+            function generateToken() {
+                // This is not a secure way to generate tokens in production
+                const randomToken = () => Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+                return randomToken();
+            }
+        });
+    </script>
+</body>
+</html>
